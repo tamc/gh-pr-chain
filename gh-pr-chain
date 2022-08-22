@@ -70,8 +70,9 @@ MergePrevious()
 
 Version()
 {
-  # Show the tag name
-  git describe --tags
+  # Show the tag name, but make sure we are looking at the repo of this command
+  local SCRIPT_DIRECTORY=$(dirname -- "$0")
+  git -C $SCRIPT_DIRECTORY describe --tags
 }
 
 
@@ -89,7 +90,7 @@ case $1 in
         MergePrevious
         exit;;
   -v|--version) # Show the current version of this script
-        Version
+        Version 
         exit;;
   *) # Display some Help
         Help

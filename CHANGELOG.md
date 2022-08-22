@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.0.3]
+
+- Fix --version to show the correct value
+
 ## [0.0.2]
 
 - my-next - go to the next PR authored by you
