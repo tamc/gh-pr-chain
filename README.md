@@ -23,6 +23,5 @@ Syntax: gh pr-chain [next|my-next|previous|merge-previous]
 next           Go to a PR that is based on this PR
 my-next        Go to a PR that is based on this PR and that I authored
 previous       Go to the PR that this PR is based upon
-previous       Go to the PR that this PR is based upon
 merge-previous Git merge changes from the PR that this PR is based upon
 ```
