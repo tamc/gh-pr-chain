@@ -22,19 +22,23 @@ Help()
    echo "A chain of PRs is where one PR is based upon another, which in turn"
    echo "is based on another, and so on."
    echo
-   echo "Syntax: gh pr-chain [next|previous|merge-previous]"
+   echo "Syntax: gh pr-chain [next|my-next|previous|merge-previous]"
    echo 
    echo "next           Go to a PR that is based on this PR"
+   echo "my-next        Go to a PR that is based on this PR and that I authored"
+   echo "previous       Go to the PR that this PR is based upon"
    echo "previous       Go to the PR that this PR is based upon"
    echo "merge-previous Git merge changes from the PR that this PR is based upon"
    echo 
    echo "File issues at https://github.com/tamc/gh-pr-chain"
 }
 
+# First argument is the author. @me means current user. blank means any user.
 Next()
 {
-  CURRENT_BRANCH=$(git branch --show-current)
-  NEXT_PRS=($(gh pr list --base $CURRENT_BRANCH --author "@me" --json headRefName | jq -r '.[] | .headRefName'))
+  local AUTHOR=$1
+  local CURRENT_BRANCH=$(git branch --show-current)
+  local NEXT_PRS=($(gh pr list --base $CURRENT_BRANCH --author "$AUTHOR" --json headRefName | jq -r '.[] | .headRefName'))
         
   # There may be several PRs that are based upon this branch, so we may
   # need to ask the user to choose between them.
@@ -74,6 +78,9 @@ Version()
 case $1 in 
   next) # Go to the next PR
         Next
+        exit;;
+  my-next) # Go the next PR that I authored
+        Next "@me"
         exit;;
   previous) # Go to the previous PR
         Previous
