@@ -6,6 +6,17 @@ it easier to move around chains of pull requests.
 A chain of PRs is where one PR is based upon another, which in turn
 is based on another, and so on.
 
+## Dependencies
+
+1. [github cli](https://github.com/cli/cli) - `brew install gh`
+2. [jq](https://github.com/stedolan/jq) - `brew install jq`
+
+## Installation
+
+`gh extension install tamc/gh-pr-chain`
+
+## Usage
+
 ```
 Syntax: gh pr-chain [next|my-next|previous|merge-previous]
 
