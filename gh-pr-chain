@@ -64,7 +64,7 @@ Previous()
 MergePrevious()
 {
   # There is only ever one previous branch, so this is easy
-  git merge $(gh pr view --json baseRefName | jq -r ".baseRefName")
+  git merge --no-edit $(gh pr view --json baseRefName | jq -r ".baseRefName")
 }
 
 Version()

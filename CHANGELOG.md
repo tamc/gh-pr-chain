@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.4]
+
+- Fix docs
+- merge-previous now uses --no-edit 
+
 ## [0.0.3]
 
 - Fix --version to show the correct value
