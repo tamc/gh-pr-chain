@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.0.5]
+
+- create 'PR title' - create a new draft PR and branch based on the currently checked out PR
+
 ## [0.0.4]
 
 - Fix docs

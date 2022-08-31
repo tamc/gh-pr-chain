@@ -22,12 +22,14 @@ Help()
    echo "A chain of PRs is where one PR is based upon another, which in turn"
    echo "is based on another, and so on."
    echo
-   echo "Syntax: gh pr-chain [next|my-next|previous|merge-previous]"
+   echo "Syntax: gh pr-chain [next|my-next|previous|merge-previous|create]"
    echo 
-   echo "next           Go to a PR that is based on this PR"
-   echo "my-next        Go to a PR that is based on this PR and that I authored"
-   echo "previous       Go to the PR that this PR is based upon"
-   echo "merge-previous Git merge changes from the PR that this PR is based upon"
+   echo "next               Go to a PR that is based on this PR"
+   echo "my-next            Go to a PR that is based on this PR and that I authored"
+   echo "previous           Go to the PR that this PR is based upon"
+   echo "merge-previous     Git merge changes from the PR that this PR is based upon"
+   echo "create 'PR Title'  Create a draft PR that is based on this PR"
+   echo "                   This will also create then checkout a branch with the same name."
    echo 
    echo "File issues at https://github.com/tamc/gh-pr-chain"
 }
@@ -74,6 +76,24 @@ Version()
   git -C $SCRIPT_DIRECTORY describe --tags
 }
 
+# First argument is the title of the pull request
+Create()
+{
+  local NEW_PR_TITLE="$1"
+  local CURRENT_PR_NUMBER=$(gh pr view --json number | jq -r ".number")
+  local NEW_PR_BODY="This PR is based on PR #$CURRENT_PR_NUMBER"
+  local CURRENT_BRANCH=$(git branch --show-current)
+  # Better regular expression mangling
+  shopt -s extglob
+  # Replace characters that aren't valid in a git branch name with -
+  local SAFE_GIT_BRANCH_NAME="${NEW_PR_TITLE//+([^[:alnum:]])/-}"
+  # Lowercase the branch name, because that seems nicer to me
+  local NEW_BRANCH="$(echo "$SAFE_GIT_BRANCH_NAME" |  tr '[:upper:]' '[:lower:]')"
+  git checkout -b $NEW_BRANCH
+  git commit --allow-empty -m "Empty commit required to create a draft PR from the CLI"
+  git push -u origin HEAD
+  gh pr create --title "$NEW_PR_TITLE" --body "$NEW_PR_BODY" --base $CURRENT_BRANCH --head $NEW_BRANCH --assignee "@me" --draft
+}
 
 case $1 in 
   next) # Go to the next PR
@@ -87,6 +107,16 @@ case $1 in
         exit;;
   merge-previous) # Merge the previous PR into this one
         MergePrevious
+        exit;;
+  create) # Create a new PR based on this one
+    if [ -z "$2" ]
+    then
+      echo "Please pass in a title for the Pull request"
+      echo "Note that if the title is more than one word, you probably need to quote it, like this example:"
+      echo "gh pr-chain create 'my pull request title'"
+      exit 1
+    fi
+        Create "$2" # Note it is important to quote $2 otherwise will split into multiple arguments on whitespace
         exit;;
   -v|--version) # Show the current version of this script
         Version 
