@@ -18,12 +18,13 @@ is based on another, and so on.
 ## Usage
 
 ```
-Syntax: gh pr-chain [next|my-next|previous|merge-previous|create]
+Syntax: gh pr-chain [next|my-next|previous|merge-previous|merge-up-chain|create]
 
 next               Go to a PR that is based on this PR
 my-next            Go to a PR that is based on this PR and that I authored
 previous           Go to the PR that this PR is based upon
-merge-previous     Git merge changes from the PR that this PR is based upon
+merge-previous     Git merge changes from the branch that this PR is based upon
+merge-up-chain     Merge changes from this branch up into the next PR. Then pushes. Then repeats up the chain.
 create 'PR Title'  Create a draft PR that is based on this PR
                    This will also create then checkout a branch with the same name.
 

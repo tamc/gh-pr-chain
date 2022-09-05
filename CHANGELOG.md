@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.0.6]
+
+- merge-up-chain - Will merge this branch into next PR, push that PR, and repeat up the chain
+
 ## [0.0.5]
 
 - create 'PR title' - create a new draft PR and branch based on the currently checked out PR

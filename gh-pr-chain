@@ -22,12 +22,13 @@ Help()
    echo "A chain of PRs is where one PR is based upon another, which in turn"
    echo "is based on another, and so on."
    echo
-   echo "Syntax: gh pr-chain [next|my-next|previous|merge-previous|create]"
+   echo "Syntax: gh pr-chain [next|my-next|previous|merge-previous|merge-up-chain|create]"
    echo 
    echo "next               Go to a PR that is based on this PR"
    echo "my-next            Go to a PR that is based on this PR and that I authored"
    echo "previous           Go to the PR that this PR is based upon"
-   echo "merge-previous     Git merge changes from the PR that this PR is based upon"
+   echo "merge-previous     Git merge changes from the branch that this PR is based upon"
+   echo "merge-up-chain     Merge changes from this branch up into the next PR. Then pushes. Then repeats up the chain."
    echo "create 'PR Title'  Create a draft PR that is based on this PR"
    echo "                   This will also create then checkout a branch with the same name."
    echo 
@@ -45,6 +46,7 @@ Next()
   # need to ask the user to choose between them.
   case ${#NEXT_PRS[@]} in
     0)  echo "No pull requests are based upon this branch ($CURRENT_BRANCH)"
+        exit 1
         ;;
     1)  git checkout ${NEXT_PRS[0]}
         ;;
@@ -67,6 +69,26 @@ MergePrevious()
 {
   # There is only ever one previous branch, so this is easy
   git merge --no-edit $(gh pr view --json baseRefName | jq -r ".baseRefName")
+}
+
+MergeUpChain()
+{
+  # This is the same as repeatedly doing:
+  # 1) gh pr-chain my-next
+  # 2) gh pr-chain merge-previous
+  # 3) git push
+  # ... until the end of the chain.
+  # It should halt on any conflict.
+  while true; do
+    # We stop doing the loop anytime we get any non-zero exit code.
+    # This should trap
+    set -e
+    set -o errexit 
+    set -o pipefail
+    Next "@me"
+    MergePrevious
+    git push
+  done
 }
 
 Version()
@@ -107,6 +129,9 @@ case $1 in
         exit;;
   merge-previous) # Merge the previous PR into this one
         MergePrevious
+        exit;;
+  merge-up-chain) # Merge this branches changes up into subsequent PRs
+        MergeUpChain
         exit;;
   create) # Create a new PR based on this one
     if [ -z "$2" ]
