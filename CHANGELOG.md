@@ -1,27 +1,31 @@
 # Changelog
 
+## [0.0.7]
+
+- FIX: Create - Do not add a PR body text if no previous PR to refer to 
+
 ## [0.0.6]
 
-- merge-up-chain - Will merge this branch into next PR, push that PR, and repeat up the chain
+- ADD: merge-up-chain - Will merge this branch into next PR, push that PR, and repeat up the chain
 
 ## [0.0.5]
 
-- create 'PR title' - create a new draft PR and branch based on the currently checked out PR
+- ADD: create 'PR title' - create a new draft PR and branch based on the currently checked out PR
 
 ## [0.0.4]
 
-- Fix docs
-- merge-previous now uses --no-edit 
+- FIX: docs
+- FIX: merge-previous now uses --no-edit 
 
 ## [0.0.3]
 
-- Fix --version to show the correct value
+- FIX: --version to show the correct value
 
 ## [0.0.2]
 
-- my-next - go to the next PR authored by you
-- next - go to the next PR (could be authored by others)
+- ADD: my-next - go to the next PR authored by you
+- ADD: next - go to the next PR (could be authored by others)
 
 ## [0.0.1]
 
-- next, previous, merge-previous commands
+- ADD: next, previous, merge-previous commands
