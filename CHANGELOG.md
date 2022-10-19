@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.0.8]
+
+- Add: insert - Will insert a PR before the current PR and update the current PR to be based upon it
+
 ## [0.0.7]
 
 - FIX: Create - Do not add a PR body text if no previous PR to refer to 

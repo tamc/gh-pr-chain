@@ -27,5 +27,9 @@ merge-previous     Git merge changes from the branch that this PR is based upon
 merge-up-chain     Merge changes from this branch up into the next PR. Then pushes. Then repeats up the chain.
 create 'PR Title'  Create a draft PR that is based on this PR
                    This will also create then checkout a branch with the same name.
+insert 'PR Title'  Insert a draft PR _before_ this PR
+                   This will also create then checkout a branch with the same name.
+                   It will also change this PR to be based on the newly created PR.
+```
 
 File issues at https://github.com/tamc/gh-pr-chain

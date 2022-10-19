@@ -22,7 +22,7 @@ Help()
    echo "A chain of PRs is where one PR is based upon another, which in turn"
    echo "is based on another, and so on."
    echo
-   echo "Syntax: gh pr-chain [next|my-next|previous|merge-previous|merge-up-chain|create]"
+   echo "Syntax: gh pr-chain [next|my-next|previous|merge-previous|merge-up-chain|create|insert]"
    echo 
    echo "next               Go to a PR that is based on this PR"
    echo "my-next            Go to a PR that is based on this PR and that I authored"
@@ -31,6 +31,9 @@ Help()
    echo "merge-up-chain     Merge changes from this branch up into the next PR. Then pushes. Then repeats up the chain."
    echo "create 'PR Title'  Create a draft PR that is based on this PR"
    echo "                   This will also create then checkout a branch with the same name."
+   echo "insert 'PR Title'  Insert a draft PR _before_ this PR"
+   echo "                   This will also create then checkout a branch with the same name."
+   echo "                   It will also change this PR to be based on the newly created PR."
    echo 
    echo "File issues at https://github.com/tamc/gh-pr-chain"
 }
@@ -120,6 +123,22 @@ Create()
   gh pr create --title "$NEW_PR_TITLE" --body "$NEW_PR_BODY" --base $CURRENT_BRANCH --head $NEW_BRANCH --assignee "@me" --draft
 }
 
+# First argument is the title of the pull request
+Insert()
+{
+  local NEW_PR_TITLE="$1"
+  # Keep a copy of the current PR number so we can update it later
+  local STARTING_PR_NUMBER=$(gh pr view --json number | jq -r ".number")
+  # Move up the chain one
+  Previous
+  # Create the new PR
+  Create "$NEW_PR_TITLE"
+  # We should now be on the new PR's branch
+  local CURRENT_BRANCH=$(git branch --show-current)
+  # Update the base branch of the original PR to point to this new branch
+  gh pr edit "$STARTING_PR_NUMBER" --base "$CURRENT_BRANCH"
+}
+
 case $1 in 
   next) # Go to the next PR
         Next
@@ -145,6 +164,16 @@ case $1 in
       exit 1
     fi
         Create "$2" # Note it is important to quote $2 otherwise will split into multiple arguments on whitespace
+        exit;;
+  insert) # Create a new PR before this one, updating this one to be based upon it
+    if [ -z "$2" ]
+    then
+      echo "Please pass in a title for the Pull request"
+      echo "Note that if the title is more than one word, you probably need to quote it, like this example:"
+      echo "gh pr-chain insert 'my pull request title'"
+      exit 1
+    fi
+        Insert "$2" # Note it is important to quote $2 otherwise will split into multiple arguments on whitespace
         exit;;
   -v|--version) # Show the current version of this script
         Version 
