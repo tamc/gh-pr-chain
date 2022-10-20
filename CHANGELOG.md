@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.0.9]
+
+- Add: squash-into-previous - Will preform a squash merge on the current PR using the PR title and body
+
 ## [0.0.8]
 
 - Add: insert - Will insert a PR before the current PR and update the current PR to be based upon it
