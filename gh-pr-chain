@@ -22,7 +22,7 @@ Help()
    echo "A chain of PRs is where one PR is based upon another, which in turn"
    echo "is based on another, and so on."
    echo
-   echo "Syntax: gh pr-chain [next|my-next|previous|merge-previous|merge-up-chain|create|insert|squash-into-previous]"
+   echo "Syntax: gh pr-chain [next|my-next|previous|merge-previous|merge-up-chain|create|insert|squash-into-previous|squash-chain]"
    echo 
    echo "next                 Go to a PR that is based on this PR"
    echo "my-next              Go to a PR that is based on this PR and that I authored"
@@ -38,6 +38,9 @@ Help()
    echo "                     It will check the PR has been approved."
    echo "                     It will use the PR title and body for the commit title and body."
    echo "                     It will close the PR and delete the branch."
+   echo "squash-chain         This will squash a chain of PRs into the current branch."
+   echo "                     Each PR will become a single commit."
+   echo "                     It is like calling squash-into-previous repeatedly."
    echo 
    echo "File issues at https://github.com/tamc/gh-pr-chain"
 }
@@ -92,11 +95,8 @@ MergeUpChain()
   while true; do
     # We stop doing the loop anytime we get any non-zero exit code.
     # This should trap
-    set -e
-    set -o errexit 
-    set -o pipefail
-    Next "@me"
-    MergePrevious
+    Next "@me" || break
+    MergePrevious || break
     git push
   done
 }
@@ -114,7 +114,7 @@ Create()
   local NEW_PR_TITLE="$1"
   local CURRENT_PR_NUMBER=$(gh pr view --json number | jq -r ".number")
   
-  if [-n "$CURRENT_PR_NUMBER"]; then
+  if [ -n "$CURRENT_PR_NUMBER"]; then
     local NEW_PR_BODY="This PR is based on PR #$CURRENT_PR_NUMBER"
   fi
   local CURRENT_BRANCH=$(git branch --show-current)
@@ -167,6 +167,47 @@ SquashIntoPrevious()
   gh pr merge --squash --subject "$COMMIT_TITLE" --body "$COMMIT_BODY" --delete-branch
 }
 
+SquashChain()
+{
+  # Keep note of our current branch as the target
+  # Prompt user to go to next PR
+  # Take note of the next PR in the chain
+  # Squash this PR down into the current branch
+  # Checkout the next PR in the chain
+  # Merge the current branch into that branch
+  # Merge up the chain
+  # Check out the next PR in the chain
+  # Take not of the following PR in the chain
+  # Squash this PR down into the current branch
+  # repeat...
+  local TARGET_BRANCH=$(git branch --show-current)
+  Next || exit 1
+  local CURRENT_BRANCH=$(git branch --show-current)
+  while true; do
+    local NEXT_PRS=($(gh pr list --base $CURRENT_BRANCH --author "$AUTHOR" --json headRefName | jq -r '.[] | .headRefName'))
+    gh pr checks --required --watch
+    SquashIntoPrevious || exit 1
+    case ${#NEXT_PRS[@]} in
+      0)  echo "No pull requests are based upon $CURRENT_BRANCH. Finished."
+          exit 1
+          ;;
+      1)  git checkout ${NEXT_PRS[0]}
+          ;;
+      *)  select NEXT in ${NEXT_PRS[@]}
+          do
+            git checkout "$NEXT"
+            break
+          done
+          ;;
+    esac
+    MergePrevious || exit 1
+    git push
+    CURRENT_BRANCH=$(git branch --show-current)
+    MergeUpChain || true
+    git checkout "$CURRENT_BRANCH"
+  done
+}
+
 case $1 in 
   next) # Go to the next PR
         Next
@@ -205,6 +246,9 @@ case $1 in
         exit;;
   squash-into-previous) # Squash merge into base branch, close PR, delete branch
     SquashIntoPrevious
+    exit;;
+  squash-chain) # Merge a chain of PRs into this branch. Each PR is its own commit. Each PR is closed.
+    SquashChain
     exit;;
   -v|--version) # Show the current version of this script
         Version 

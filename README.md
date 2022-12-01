@@ -18,7 +18,7 @@ is based on another, and so on.
 ## Usage
 
 ```
-Syntax: gh pr-chain [next|my-next|previous|merge-previous|merge-up-chain|create|insert|squash-into-previous]
+Syntax: gh pr-chain [next|my-next|previous|merge-previous|merge-up-chain|create|insert|squash-into-previous|squash-chain]
 
 next                 Go to a PR that is based on this PR
 my-next              Go to a PR that is based on this PR and that I authored
@@ -34,6 +34,9 @@ squash-into-previous This will squash merge this PR into its base branch.
                      It will check the PR has been approved.
                      It will use the PR title and body for the commit title and body.
                      It will close the PR and delete the branch.
+squash-chain         This will squash a chain of PRs into the current branch.
+                     Each PR will become a single commit.
+                     It is like calling squash-into-previous repeatedly.
 ```
 
 File issues at https://github.com/tamc/gh-pr-chain

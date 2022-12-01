@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.0.10]
+
+- Add: squash-chain - Will repeatedly squash-into-previous  a chain of PRs
+
 ## [0.0.9]
 
 - Add: squash-into-previous - Will preform a squash merge on the current PR using the PR title and body
