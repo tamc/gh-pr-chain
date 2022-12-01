@@ -164,7 +164,11 @@ SquashIntoPrevious()
   local COMMIT_TITLE="$PR_TITLE (#$PR_NUMBER)"
   local COMMIT_BODY="$PR_BODY$NEWLINE$NEWLINE$PR_URL"
   
+  echo "Waiting for checks to finish."
+  gh pr checks --required --watch
+  echo "Required checks complete. Merging."
   gh pr merge --squash --subject "$COMMIT_TITLE" --body "$COMMIT_BODY" --delete-branch
+  echo "Merged"
 }
 
 SquashChain()

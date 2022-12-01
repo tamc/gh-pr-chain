@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.0.11]
+
+- CHANGE: squash-into-previous - will wait for any required checks to complete before attempting merge
+
 ## [0.0.10]
 
 - Add: squash-chain - Will repeatedly squash-into-previous  a chain of PRs
