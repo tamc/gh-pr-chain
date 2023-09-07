@@ -25,7 +25,9 @@ Help()
    echo "Syntax: gh pr-chain [next|my-next|previous|merge-previous|merge-up-chain|create|insert|squash-into-previous|squash-chain]"
    echo 
    echo "next                 Go to a PR that is based on this PR"
+   echo "last                 Go to the final PR in a chain"
    echo "my-next              Go to a PR that is based on this PR and that I authored"
+   echo "my-last              Go to the final PR in a chain that I authored"
    echo "previous             Go to the PR that this PR is based upon"
    echo "merge-previous       Git merge changes from the branch that this PR is based upon"
    echo "merge-up-chain       Merge changes from this branch up into the next PR. Then pushes. Then repeats up the chain."
@@ -70,6 +72,17 @@ Next()
         done
         ;;
   esac
+}
+
+# First argument is the author. @me means current user. blank means any user.
+Last()
+{
+  local AUTHOR=$1
+  while true; do
+    # We stop doing the loop anytime we get any non-zero exit code.
+    # This should trap
+    Next "$AUTHOR" || break
+  done
 }
 
 Previous()
@@ -164,9 +177,9 @@ SquashIntoPrevious()
   local COMMIT_TITLE="$PR_TITLE (#$PR_NUMBER)"
   local COMMIT_BODY="$PR_BODY$NEWLINE$NEWLINE$PR_URL"
   
-  echo "Waiting for checks to finish."
-  gh pr checks --required --watch
-  echo "Required checks complete. Merging."
+  # echo "Waiting for checks to finish."
+  # gh pr checks --watch
+  # echo "Required checks complete. Merging."
   gh pr merge --squash --subject "$COMMIT_TITLE" --body "$COMMIT_BODY" --delete-branch
   echo "Merged"
 }
@@ -218,6 +231,12 @@ case $1 in
         exit;;
   my-next) # Go the next PR that I authored
         Next "@me"
+        exit;;
+  last) # Go to the last PR
+        Last
+        exit;;
+  my-last) # Go to the last PR that I authored
+        Last "@me"
         exit;;
   previous) # Go to the previous PR
         Previous

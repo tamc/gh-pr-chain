@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.12]
+
+- Add: last - Will go to the last PR in a chain of PRs
+- Add: my-last - Will go the last PR in a chain of PRs that I authored
+
 ## [0.0.11]
 
 - CHANGE: squash-into-previous - will wait for any required checks to complete before attempting merge

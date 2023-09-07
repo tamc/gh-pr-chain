@@ -21,7 +21,9 @@ is based on another, and so on.
 Syntax: gh pr-chain [next|my-next|previous|merge-previous|merge-up-chain|create|insert|squash-into-previous|squash-chain]
 
 next                 Go to a PR that is based on this PR
+last                 Go to the final PR in a chain
 my-next              Go to a PR that is based on this PR and that I authored
+my-last              Go to the final PR in a chain that I authored
 previous             Go to the PR that this PR is based upon
 merge-previous       Git merge changes from the branch that this PR is based upon
 merge-up-chain       Merge changes from this branch up into the next PR. Then pushes. Then repeats up the chain.
