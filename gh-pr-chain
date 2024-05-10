@@ -127,7 +127,7 @@ Create()
   local NEW_PR_TITLE="$1"
   local CURRENT_PR_NUMBER=$(gh pr view --json number | jq -r ".number")
   
-  if [ -n "$CURRENT_PR_NUMBER"]; then
+  if [ -n "$CURRENT_PR_NUMBER" ]; then
     local NEW_PR_BODY="This PR is based on PR #$CURRENT_PR_NUMBER"
   fi
   local CURRENT_BRANCH=$(git branch --show-current)
