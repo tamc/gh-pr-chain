@@ -125,6 +125,8 @@ Version()
 Create()
 {
   local NEW_PR_TITLE="$1"
+  # If NEW_PR_TITLE is only a number, then use the gh command to get the title of the issue with that number and use that title, appending #<issue-number> AI!
+  
   local CURRENT_PR_NUMBER=$(gh pr view --json number | jq -r ".number")
   
   if [ -n "$CURRENT_PR_NUMBER" ]; then
