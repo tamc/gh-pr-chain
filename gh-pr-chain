@@ -125,6 +125,7 @@ Version()
 Create()
 {
   local NEW_PR_TITLE="$1"
+  # Tidy this up by also defining NEW_PR_BODY here as an empty string, and then fixing its uses below AI!
 
   # Check if the title is just a number (issue reference)
   if [[ "$NEW_PR_TITLE" =~ ^[0-9]+$ ]]; then
