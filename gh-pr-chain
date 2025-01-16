@@ -125,7 +125,7 @@ Version()
 Create()
 {
   local NEW_PR_TITLE="$1"
-  # Tidy this up by also defining NEW_PR_BODY here as an empty string, and then fixing its uses below AI!
+  local NEW_PR_BODY=""
 
   # Check if the title is just a number (issue reference)
   if [[ "$NEW_PR_TITLE" =~ ^[0-9]+$ ]]; then
@@ -140,7 +140,7 @@ Create()
     if [ -n "$NEW_PR_BODY" ]; then
       NEW_PR_BODY="$NEW_PR_BODY${NEWLINE}${NEWLINE}This PR is based on PR #$CURRENT_PR_NUMBER"
     else
-      local NEW_PR_BODY="This PR is based on PR #$CURRENT_PR_NUMBER"
+      NEW_PR_BODY="This PR is based on PR #$CURRENT_PR_NUMBER"
     fi
   fi
   local CURRENT_BRANCH=$(git branch --show-current)
