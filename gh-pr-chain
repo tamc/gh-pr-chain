@@ -125,10 +125,23 @@ Version()
 Create()
 {
   local NEW_PR_TITLE="$1"
+  local NEW_PR_BODY=""
+
+  # Check if the title is just a number (issue reference)
+  if [[ "$NEW_PR_TITLE" =~ ^[0-9]+$ ]]; then
+    local ISSUE_NUMBER="$NEW_PR_TITLE"
+    NEW_PR_TITLE="$(gh issue view "$ISSUE_NUMBER" --json title | jq -r '.title') #$ISSUE_NUMBER"
+    local NEW_PR_BODY="Issue #$ISSUE_NUMBER."
+  fi
+  
   local CURRENT_PR_NUMBER=$(gh pr view --json number | jq -r ".number")
   
   if [ -n "$CURRENT_PR_NUMBER" ]; then
-    local NEW_PR_BODY="This PR is based on PR #$CURRENT_PR_NUMBER"
+    if [ -n "$NEW_PR_BODY" ]; then
+      NEW_PR_BODY="$NEW_PR_BODY${NEWLINE}${NEWLINE}This PR is based on PR #$CURRENT_PR_NUMBER"
+    else
+      NEW_PR_BODY="This PR is based on PR #$CURRENT_PR_NUMBER"
+    fi
   fi
   local CURRENT_BRANCH=$(git branch --show-current)
   # Better regular expression mangling

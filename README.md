@@ -29,6 +29,8 @@ merge-previous       Git merge changes from the branch that this PR is based upo
 merge-up-chain       Merge changes from this branch up into the next PR. Then pushes. Then repeats up the chain.
 create 'PR Title'    Create a draft PR that is based on this PR
                      This will also create then checkout a branch with the same name.
+create 123           Create a draft PR that is titled after issue 123 and based on this PR
+                     This will also create then checkout a branch with the same name.
 insert 'PR Title'    Insert a draft PR _before_ this PR
                      This will also create then checkout a branch with the same name.
                      It will also change this PR to be based on the newly created PR.
