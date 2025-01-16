@@ -125,15 +125,18 @@ Version()
 Create()
 {
   local NEW_PR_TITLE="$1"
+
   # Check if the title is just a number (issue reference)
   if [[ "$NEW_PR_TITLE" =~ ^[0-9]+$ ]]; then
     local ISSUE_NUMBER="$NEW_PR_TITLE"
     NEW_PR_TITLE="$(gh issue view "$ISSUE_NUMBER" --json title | jq -r '.title') #$ISSUE_NUMBER"
+    # Set the NEW_PR_BODY to be 'Issue #<issue-number>.' AI
   fi
   
   local CURRENT_PR_NUMBER=$(gh pr view --json number | jq -r ".number")
   
   if [ -n "$CURRENT_PR_NUMBER" ]; then
+    # If NEW_PR_BODY already set above, append this text AI!
     local NEW_PR_BODY="This PR is based on PR #$CURRENT_PR_NUMBER"
   fi
   local CURRENT_BRANCH=$(git branch --show-current)
