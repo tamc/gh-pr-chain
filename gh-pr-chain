@@ -55,6 +55,12 @@ Next()
 {
   local AUTHOR=$1
   local CURRENT_BRANCH=$(git branch --show-current)
+  
+  # If on detached HEAD, assume we're on the main branch
+  if [ -z "$CURRENT_BRANCH" ]; then
+    CURRENT_BRANCH="main"
+  fi
+  
   local NEXT_PRS=($(gh pr list --base $CURRENT_BRANCH --author "$AUTHOR" --json headRefName | jq -r '.[] | .headRefName'))
         
   # There may be several PRs that are based upon this branch, so we may

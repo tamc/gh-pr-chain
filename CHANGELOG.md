@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - Fix: create - When called on a detached HEAD, don't specify a base branch for the PR (let GitHub use its default)
+- Fix: next - When on a detached HEAD, assume the current branch is main
 
 ## [0.0.12]
 
