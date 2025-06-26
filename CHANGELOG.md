@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: create - When called on a detached HEAD, don't specify a base branch for the PR (let GitHub use its default)
+
 ## [0.0.12]
 
 - Add: last - Will go to the last PR in a chain of PRs

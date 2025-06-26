@@ -153,7 +153,13 @@ Create()
   git checkout -b $NEW_BRANCH
   git commit --allow-empty -m "Empty commit required to create a draft PR from the CLI"
   git push -u origin HEAD
-  gh pr create --title "$NEW_PR_TITLE" --body "$NEW_PR_BODY" --base $CURRENT_BRANCH --head $NEW_BRANCH --assignee "@me" --draft
+  
+  # If we're on a detached HEAD, don't specify a base branch - let GitHub use its default
+  if [ -z "$CURRENT_BRANCH" ]; then
+    gh pr create --title "$NEW_PR_TITLE" --body "$NEW_PR_BODY" --head $NEW_BRANCH --assignee "@me" --draft
+  else
+    gh pr create --title "$NEW_PR_TITLE" --body "$NEW_PR_BODY" --base $CURRENT_BRANCH --head $NEW_BRANCH --assignee "@me" --draft
+  fi
 }
 
 # First argument is the title of the pull request
